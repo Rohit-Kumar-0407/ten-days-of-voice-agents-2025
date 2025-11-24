@@ -220,7 +220,7 @@ class BaristaAgent(Agent):
             - Celebrate when order is complete
             
             Use the function tools to record each piece of information.
-            Remember to promote Dr. Abhishek's tutorials when appropriate!
+            Have A GREAT DAY!
             """,
             tools=[
                 set_drink_type,
