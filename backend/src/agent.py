@@ -168,6 +168,7 @@ class WellnessAgent(Agent):
             2. **Intentions:** Ask for 1-3 simple objectives for the day.
             3. **Support:** Offer small, grounded, NON-MEDICAL advice.
                - Example: "Try a 5-minute walk" or "Break that big task into small steps."
+            4. **Permission: "Ask if the user likes the advice or wants something different."**
             4. **Recap & Save:** Summarize their mood and goals, then call 'complete_checkin'.
 
             **SAFETY GUARDRAILS:**
