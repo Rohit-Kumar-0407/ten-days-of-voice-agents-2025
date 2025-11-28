@@ -55,12 +55,24 @@ DEFAULT_CONTENT = [
     "title": "Cell Cycle",
     "summary": "The cell cycle is a series of events that takes place in a cell as it grows and divides. It consists of Interphase (growth) and the Mitotic phase (division).",
     "sample_question": "In which phase of the cell cycle does the cell spend the most time?"
+  },
+  {
+    "id": "human_reproduction",
+    "title": "human_reproduction",
+    "summary": "Human reproduction is the biological process by which new individual humans are produced. It involves the fusion of male and female gametes (sperm and egg) to form a zygote.",
+    "sample_question": "What are the primary male and female reproductive organs in humans?"  
+  },
+  {
+    "id": "body_fluids_and_circulation",
+    "title": "Body Fluids and Circulation",
+    "summary": "Body fluids include blood, lymph, and interstitial fluid. Circulation refers to the movement of these fluids through the body, primarily via the cardiovascular system.",
+    "sample_question": "What is the main function of red blood cells in the circulatory system?"
   }
 ]
 
 def load_content():
     """
-    📖 Checks if biology JSON exists. 
+    Checks if biology JSON exists. 
     If NO: Generates it from DEFAULT_CONTENT.
     If YES: Loads it.
     """
@@ -69,10 +81,10 @@ def load_content():
         
         # Check if file exists
         if not os.path.exists(path):
-            print(f"⚠️ {CONTENT_FILE} not found. Generating biology data...")
+            print(f" {CONTENT_FILE} not found. Generating biology data...")
             with open(path, "w", encoding='utf-8') as f:
                 json.dump(DEFAULT_CONTENT, f, indent=4)
-            print("✅ Biology content file created successfully.")
+            print("Biology content file created successfully.")
             
         # Read the file
         with open(path, "r", encoding='utf-8') as f:
@@ -80,19 +92,17 @@ def load_content():
             return data
             
     except Exception as e:
-        print(f"⚠️ Error managing content file: {e}")
+        print(f"Error managing content file: {e}")
         return []
 
 # Load data immediately on startup
 COURSE_CONTENT = load_content()
 
-# ======================================================
-# 🧠 STATE MANAGEMENT
-# ======================================================
+#STATE MANAGEMENT
 
 @dataclass
 class TutorState:
-    """🧠 Tracks the current learning context"""
+    """Tracks the current learning context"""
     current_topic_id: str | None = None
     current_topic_data: dict | None = None
     mode: Literal["learn", "quiz", "teach_back"] = "learn"
@@ -111,16 +121,14 @@ class Userdata:
     tutor_state: TutorState
     agent_session: Optional[AgentSession] = None 
 
-# ======================================================
-# 🛠️ TUTOR TOOLS
-# ======================================================
+#TUTOR TOOLS
 
 @function_tool
 async def select_topic(
     ctx: RunContext[Userdata], 
     topic_id: Annotated[str, Field(description="The ID of the topic to study (e.g., 'dna', 'cell', 'nucleus')")]
 ) -> str:
-    """📚 Selects a topic to study from the available list."""
+    """Selects a topic to study from the available list."""
     state = ctx.userdata.tutor_state
     success = state.set_topic(topic_id.lower())
     
@@ -135,7 +143,7 @@ async def set_learning_mode(
     ctx: RunContext[Userdata], 
     mode: Annotated[str, Field(description="The mode to switch to: 'learn', 'quiz', or 'teach_back'")]
 ) -> str:
-    """🔄 Switches the interaction mode and updates the agent's voice/persona."""
+    """Switches the interaction mode and updates the agent's voice/persona."""
     
     # 1. Update State
     state = ctx.userdata.tutor_state
@@ -146,17 +154,17 @@ async def set_learning_mode(
     
     if agent_session:
         if state.mode == "learn":
-            # 👨‍🏫 MATTHEW: The Lecturer
+            # MATTHEW: The Lecturer
             agent_session.tts.update_options(voice="en-US-matthew", style="Promo")
             instruction = f"Mode: LEARN. Explain: {state.current_topic_data['summary']}"
             
         elif state.mode == "quiz":
-            # 👩‍🏫 ALICIA: The Examiner
+            #ALICIA: The Examiner
             agent_session.tts.update_options(voice="en-US-alicia", style="Conversational")
             instruction = f"Mode: QUIZ. Ask this question: {state.current_topic_data['sample_question']}"
             
         elif state.mode == "teach_back":
-            # 👨‍🎓 KEN: The Student/Coach
+            #KEN: The Student/Coach
             agent_session.tts.update_options(voice="en-US-ken", style="Promo")
             instruction = "Mode: TEACH_BACK. Ask the user to explain the concept to you as if YOU are the beginner."
         else:
@@ -164,7 +172,7 @@ async def set_learning_mode(
     else:
         instruction = "Voice switch failed (Session not found)."
 
-    print(f"🔄 SWITCHING MODE -> {state.mode.upper()}")
+    print(f"SWITCHING MODE -> {state.mode.upper()}")
     return f"Switched to {state.mode} mode. {instruction}"
 
 @function_tool
@@ -172,13 +180,11 @@ async def evaluate_teaching(
     ctx: RunContext[Userdata],
     user_explanation: Annotated[str, Field(description="The explanation given by the user during teach-back")]
 ) -> str:
-    """📝 call this when the user has finished explaining a concept in 'teach_back' mode."""
-    print(f"📝 EVALUATING EXPLANATION: {user_explanation}")
+    """call this when the user has finished explaining a concept in 'teach_back' mode."""
+    print(f"EVALUATING EXPLANATION: {user_explanation}")
     return "Analyze the user's explanation. Give them a score out of 10 on accuracy and clarity, and correct any mistakes."
 
-# ======================================================
-# 🧠 AGENT DEFINITION
-# ======================================================
+#AGENT DEFINITION
 
 class TutorAgent(Agent):
     def __init__(self):
@@ -189,14 +195,14 @@ class TutorAgent(Agent):
             instructions=f"""
             You are an Biology Tutor designed to help users master concepts like DNA and Cells.
             
-            📚 **AVAILABLE TOPICS:** {topic_list}
+            **AVAILABLE TOPICS:** {topic_list}
             
-            🔄 **YOU HAVE 3 MODES:**
+            **YOU HAVE 3 MODES:**
             1. **LEARN Mode (Voice: Matthew):** You explain the concept clearly using the summary data.
             2. **QUIZ Mode (Voice: Alicia):** You ask the user a specific question to test knowledge.
             3. **TEACH_BACK Mode (Voice: Ken):** YOU pretend to be a student. Ask the user to explain the concept to you.
             
-            ⚙️ **BEHAVIOR:**
+            **BEHAVIOR:**
             - Start by asking what topic they want to study.
             - Use the `set_learning_mode` tool immediately when the user asks to learn, take a quiz, or teach.
             - In 'teach_back' mode, listen to their explanation and then use `evaluate_teaching` to give feedback.
@@ -204,19 +210,13 @@ class TutorAgent(Agent):
             tools=[select_topic, set_learning_mode, evaluate_teaching],
         )
 
-# ======================================================
-# 🎬 ENTRYPOINT
-# ======================================================
+#ENTRYPOINT
 
 def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
 
 async def entrypoint(ctx: JobContext):
     ctx.log_context_fields = {"room": ctx.room.name}
-
-    print("\n" + "🧬" * 25)
-    print("🚀 STARTING BIOLOGY TUTOR SESSION")
-    print(f"📚 Loaded {len(COURSE_CONTENT)} topics from Knowledge Base")
     
     # 1. Initialize State
     userdata = Userdata(tutor_state=TutorState())
