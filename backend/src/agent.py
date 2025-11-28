@@ -113,7 +113,7 @@ async def update_lead_profile(
     if team_size: profile.team_size = team_size
     if timeline: profile.timeline = timeline
    
-    print(f"📝 UPDATING LEAD: {profile}")
+    print(f"UPDATING LEAD: {profile}")
     return "Lead profile updated. Continue the conversation."
 
 @function_tool
