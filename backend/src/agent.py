@@ -124,7 +124,7 @@ async def submit_lead_and_end(
     Saves the lead to the database and signals the end of the call.
     Call this when the user says goodbye or 'that's all'.
     """
-    profile = ctx.userdata.lead_profile
+    profile = ctx.userdata
    
     # Save to JSON file (Append mode)
     db_path = os.path.join(os.path.dirname(__file__), LEADS_FILE)
