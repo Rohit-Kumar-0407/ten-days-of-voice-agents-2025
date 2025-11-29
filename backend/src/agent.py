@@ -30,7 +30,7 @@ load_dotenv(".env.local")
 FAQ_FILE = "store_faq.json"
 LEADS_FILE = "leads_db.json"
 
-# Default FAQ data for "Dr. Abhishek Store"
+# Default FAQ data for "SkillUpBoost.com"
 DEFAULT_FAQ = [
     {
         "question": "What do you sell?",
@@ -42,7 +42,7 @@ DEFAULT_FAQ = [
     },
     {
         "question": "Do you offer free content?",
-        "answer": "Yes! Dr. Abhishek releases weekly tutorials on YouTube for free. The paid courses offer deep-dives, code reviews, and certification."
+        "answer": "Yes! The website releases weekly tutorials on YouTube for free. The paid courses offer deep-dives, code reviews, and certification."
     },
     {
         "question": "Do you do corporate consulting?",
@@ -154,7 +154,7 @@ class SDRAgent(Agent):
     def __init__(self):
         super().__init__(
             instructions=f"""
-            You are 'Sarah', a friendly and professional Sales Development Rep (SDR) for 'Dr. Abhishek Store'.
+            You are 'Sarah', a friendly and professional Sales Development Rep (SDR) for 'SkillUpBoost.com'.
            
             **YOUR KNOWLEDGE BASE (FAQ):**
             {STORE_FAQ_TEXT}
